@@ -89,6 +89,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RightClick"",
+                    ""type"": ""Value"",
+                    ""id"": ""f6405582-3ff0-4b68-b541-884a1149d89c"",
+                    ""expectedControlType"": ""Delta"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -353,6 +362,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Touch"",
                     ""action"": ""SecondaryFingerTouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2b16376a-eb9c-4126-b859-8eb530e6af18"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""RightClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -947,6 +967,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
         m_Player_PrimaryFingerTouch = m_Player.FindAction("PrimaryFingerTouch", throwIfNotFound: true);
         m_Player_SecondaryFingerTouch = m_Player.FindAction("SecondaryFingerTouch", throwIfNotFound: true);
+        m_Player_RightClick = m_Player.FindAction("RightClick", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1027,6 +1048,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Zoom;
     private readonly InputAction m_Player_PrimaryFingerTouch;
     private readonly InputAction m_Player_SecondaryFingerTouch;
+    private readonly InputAction m_Player_RightClick;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -1038,6 +1060,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
         public InputAction @PrimaryFingerTouch => m_Wrapper.m_Player_PrimaryFingerTouch;
         public InputAction @SecondaryFingerTouch => m_Wrapper.m_Player_SecondaryFingerTouch;
+        public InputAction @RightClick => m_Wrapper.m_Player_RightClick;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1068,6 +1091,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @SecondaryFingerTouch.started += instance.OnSecondaryFingerTouch;
             @SecondaryFingerTouch.performed += instance.OnSecondaryFingerTouch;
             @SecondaryFingerTouch.canceled += instance.OnSecondaryFingerTouch;
+            @RightClick.started += instance.OnRightClick;
+            @RightClick.performed += instance.OnRightClick;
+            @RightClick.canceled += instance.OnRightClick;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1093,6 +1119,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @SecondaryFingerTouch.started -= instance.OnSecondaryFingerTouch;
             @SecondaryFingerTouch.performed -= instance.OnSecondaryFingerTouch;
             @SecondaryFingerTouch.canceled -= instance.OnSecondaryFingerTouch;
+            @RightClick.started -= instance.OnRightClick;
+            @RightClick.performed -= instance.OnRightClick;
+            @RightClick.canceled -= instance.OnRightClick;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1282,6 +1311,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnZoom(InputAction.CallbackContext context);
         void OnPrimaryFingerTouch(InputAction.CallbackContext context);
         void OnSecondaryFingerTouch(InputAction.CallbackContext context);
+        void OnRightClick(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

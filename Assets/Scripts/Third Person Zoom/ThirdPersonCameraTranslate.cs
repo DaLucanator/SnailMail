@@ -12,7 +12,7 @@ public class ThirdPersonCameraTranslate : MonoBehaviour
 
     void Update()
     {
-        Vector3 moveDirection = (transform.forward * verticalInput) + (transform.right * horizontalInput);
+        Vector3 moveDirection = (Vector3.forward * verticalInput) + (Vector3.right * horizontalInput);
 
         transform.Translate(moveDirection * Time.deltaTime * moveSpeed);
     }

@@ -48,13 +48,11 @@ public class BlockManager : MonoBehaviour
             pos.y -= pos.y % 1;
             pos.z -= pos.z % 1;
 
-            pos.x += 2.5f;
-            pos.y += 1.5f;
+            pos.x += 0.5f;
+            pos.y += 0.5f;
             pos.z += 0.5f;
 
             block.transform.position = pos;
-
-            Debug.Log(pos);
         }
     }
 }

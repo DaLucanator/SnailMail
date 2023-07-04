@@ -14,8 +14,8 @@ public class ThirdPersonCameraZoom : MonoBehaviour
     {
         zoomInput = inputValue.Get<float>();
 
-        if(zoomInput > 0) { zoomAmount = Mathf.Clamp(cam.fieldOfView + (zoomSpeed * Time.deltaTime), minFov, maxFov); }
-        else if (zoomInput < 0) { zoomAmount = Mathf.Clamp(cam.fieldOfView - (zoomSpeed * Time.deltaTime), minFov, maxFov); }
+        if(zoomInput < 0) { zoomAmount = Mathf.Clamp(cam.fieldOfView + (zoomSpeed * Time.deltaTime), minFov, maxFov); }
+        else if (zoomInput > 0) { zoomAmount = Mathf.Clamp(cam.fieldOfView - (zoomSpeed * Time.deltaTime), minFov, maxFov); }
 
         StartCoroutine(MoveOverSeconds(zoomAmount, zoomInSeconds));
     }
