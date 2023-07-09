@@ -35,24 +35,4 @@ public class BlockManager : MonoBehaviour
     {
 
     }
-
-    private void FixedUpdate()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-
-            Vector3 pos = hit.point;
-
-            pos.x -= pos.x % 1;
-            pos.y -= pos.y % 1;
-            pos.z -= pos.z % 1;
-
-            pos.x += 0.5f;
-            pos.y += 0.5f;
-            pos.z += 0.5f;
-
-            block.transform.position = pos;
-        }
-    }
 }

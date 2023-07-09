@@ -14,8 +14,8 @@ public class ThirdPersonCameraZoom : MonoBehaviour
     {
         zoomInput = inputValue.Get<float>();
 
-        if(zoomInput < 0) { zoomAmount = Mathf.Clamp(cam.fieldOfView + (zoomSpeed * Time.deltaTime), minFov, maxFov); }
-        else if (zoomInput > 0) { zoomAmount = Mathf.Clamp(cam.fieldOfView - (zoomSpeed * Time.deltaTime), minFov, maxFov); }
+        if (zoomInput < 0) { zoomAmount = Mathf.Clamp(cam.fieldOfView + zoomSpeed, minFov, maxFov); }
+        else if (zoomInput > 0) { zoomAmount = Mathf.Clamp(cam.fieldOfView - zoomSpeed, minFov, maxFov); }
 
         StartCoroutine(MoveOverSeconds(zoomAmount, zoomInSeconds));
     }
@@ -23,6 +23,7 @@ public class ThirdPersonCameraZoom : MonoBehaviour
     //code from: https://answers.unity.com/questions/572851/way-to-move-object-over-time.html
     public IEnumerator MoveOverSeconds(float end, float seconds)
     {
+
         float elapsedTime = 0;
         while (elapsedTime < seconds)
         {
