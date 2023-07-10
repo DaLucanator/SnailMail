@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class GhostBlock : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] private Transform sendRayhere;
+
     void Start()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnDrawGizmos()
     {
-        Ray ray = new Ray(transform.position, transform.forward.normalized);
-        Debug.DrawRay(transform.position, transform.forward);
+
+        Gizmos.DrawLine(transform.position, sendRayhere.position);
     }
 }

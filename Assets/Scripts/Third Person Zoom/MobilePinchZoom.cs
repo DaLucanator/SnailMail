@@ -46,7 +46,6 @@ public class MobilePinchZoom : MonoBehaviour
     private void Update()
     {
         ZoomCheck();
-        Debug();
     }
 
     void ZoomCheck()
