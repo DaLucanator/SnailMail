@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlaceObject : MonoBehaviour
+public class ObjectPlacer : MonoBehaviour
 {
     [SerializeField] private MovementWidget movementWidget;
     [SerializeField] private GameObject UI;
@@ -12,7 +12,7 @@ public class PlaceObject : MonoBehaviour
     private GameObject objectToPlace;
     private Vector3 pos;
 
-    public void PlaceAnObject (GameObject placeMe)
+    public void PlaceObject (GameObject placeMe)
     {
         objectToPlace = null;
         canPlaceObject = true;
