@@ -22,8 +22,6 @@ public class ThirdPersonCameraTranslate : MonoBehaviour
         Vector2 moveVector2 = inputValue.Get<Vector2>();
         horizontalInput = moveVector2.x;
         verticalInput = moveVector2.y;
-
-        Debug.Log("boop");
     }
 
     private void OnRotateCameraRight()

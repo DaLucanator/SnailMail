@@ -25,6 +25,7 @@ public class RotateCameraDrag : MonoBehaviour
     {
         if (rightClick.WasPerformedThisFrame() && canMove)
         {
+            Debug.Log("boop");
             previousPosition = cam.ScreenToViewportPoint(Mouse.current.position.ReadValue());
             canMove = false;
         }
