@@ -4,21 +4,32 @@ using UnityEngine;
 
 public class MovementWidget : MonoBehaviour
 {
-    [SerializeField] private GameObject objectToNudge, buttons, xZButtons, yButtons, rotateButtons, UI;
+    [SerializeField] private GameObject objectToNudge, buttons, northButton, eastButton, southButton, westButton, upButton, downButton, xZRotateButtons, yRotateButtons, uI;
 
-    private PlaceableObject placeableObject;
-    
-    public void EnableWidget(GameObject objectToMove)
+    PlaceableObject placeableObject;
+
+    private void Start()
     {
+        EventManager.current.EnableMovementWidget += EnableMovementWidget;
+        EventManager.current.DisableMovementWidget += DisableMovementWidget;
+        EventManager.current.EnableObject += EnableBlock;
+    }
+
+    public void EnableMovementWidget(GameObject objectToMove)
+    {
+        EventManager.current.EventTrigger("SwitchUIState", uI);
         placeableObject = objectToMove.GetComponent<PlaceableObject>();
         objectToNudge = objectToMove;
 
-        xZButtons.SetActive(placeableObject.useXZButtons);
-        yButtons.SetActive(placeableObject.useYButtons);
-        rotateButtons.SetActive(placeableObject.useRotateButtons);
+        xZRotateButtons.SetActive(placeableObject.useXZRotateButtons);
+        yRotateButtons.SetActive(placeableObject.useYRotateButtons);
 
         buttons.SetActive(true);
-        UI.SetActive(true);
+    }
+
+    public void DisableMovementWidget()
+    {
+        buttons.SetActive(false);
     }
 
     public void EnableBlock()
@@ -58,5 +69,17 @@ public class MovementWidget : MonoBehaviour
     private void Update()
     {
         if (objectToNudge != null) { transform.position = objectToNudge.transform.position; }
+        CheckForOccupiedVectors();
+    }
+
+    private void CheckForOccupiedVectors()
+    {
+        northButton.SetActive(!OccupiedVectorManager.current.VectorIsOccupied(transform.position + Vector3.forward));
+        eastButton.SetActive(!OccupiedVectorManager.current.VectorIsOccupied(transform.position + Vector3.right));
+        southButton.SetActive(!OccupiedVectorManager.current.VectorIsOccupied(transform.position + Vector3.back));
+        westButton.SetActive(!OccupiedVectorManager.current.VectorIsOccupied(transform.position + Vector3.left));
+        upButton.SetActive(!OccupiedVectorManager.current.VectorIsOccupied(transform.position + Vector3.up));
+        downButton.SetActive(!OccupiedVectorManager.current.VectorIsOccupied(transform.position + Vector3.down));
+
     }
 }

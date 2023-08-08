@@ -1,29 +1,107 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ObjectPlacer : MonoBehaviour
 {
-    [SerializeField] private MovementWidget movementWidget;
-    [SerializeField] private GameObject UI;
+    //this is my pooiest script but it's not that bad
 
-    private bool canPlaceObject;
+    [SerializeField] private GameObject uIMobile;
+
+    private bool canPlaceObject, canPlaceObjectMobile, objectIsRoom, isPaused;
     private GameObject objectToPlace;
+    private float gridSize;
     private Vector3 pos;
 
-    public void PlaceObject (GameObject placeMe)
+    [SerializeField] private PlayerInput playerInput;
+    private InputAction primaryFingerTouch;
+    private Vector2 touchPos1;
+
+    private void Awake()
     {
-        objectToPlace = null;
-        canPlaceObject = true;
-        objectToPlace = Instantiate(placeMe, pos, Quaternion.identity);
+        primaryFingerTouch = playerInput.actions["PrimaryFingerTouch"];
     }
 
-    public void stopPlacingObject()
+    private void Start()
+    {
+        EventManager.current.StartObjectPlacement += StartObjectPlacement;
+        EventManager.current.StopObjectPlacement += StopObjectPlacement;
+        EventManager.current.ConfirmObjectPlacement += ConfirmObjectPlacement;
+        EventManager.current.PauseObjectPlacement += PauseObjectPlacement;
+        EventManager.current.ContinueObjectPlacement += ContinueObjectPlacement;
+    }
+
+    private void OnEnable()
+    {
+        primaryFingerTouch.performed += PrimaryFingerTouch;
+    }
+
+    void PrimaryFingerTouch(InputAction.CallbackContext context)
+    {
+        touchPos1 = context.ReadValue<Vector2>();
+    }
+
+    public void PauseObjectPlacement()
+    {
+        isPaused = true;
+    }
+
+    public void ContinueObjectPlacement()
+    {
+        isPaused = false;
+    }
+
+    public void StopObjectPlacement()
     {
         canPlaceObject = false;
+        canPlaceObjectMobile = false;
+        objectIsRoom = false;
+        EventManager.current.EventTrigger("DisableRoomGrid");
+        EventManager.current.EventTrigger("DisableMovementWidget");
         Destroy(objectToPlace);
-        UI.SetActive(false);
+    }
+
+    public void ConfirmObjectPlacement()
+    {
+        if (objectIsRoom && !OccupiedVectorManager.current.RoomVectorIsOccupied(objectToPlace.transform.position))
+        {
+            objectIsRoom = false;
+            canPlaceObject = false;
+            canPlaceObjectMobile = false;
+            EventManager.current.EventTrigger("DisableRoomGrid");
+            objectToPlace.GetComponent<PlaceableObject>().DisableGhost();
+            EventManager.current.EventTrigger("GoHome");
+        }
+
+        else if(!objectIsRoom && !OccupiedVectorManager.current.VectorIsOccupied(objectToPlace.transform.position))
+        {
+            canPlaceObject = false;
+            canPlaceObjectMobile = false;
+            EventManager.current.EventTrigger("EnableMovementWidget", objectToPlace);
+        }
+    }
+
+    public void StartObjectPlacement (GameObject placeMe)
+    {
+        if(Application.platform == RuntimePlatform.Android)
+        {
+            EventManager.current.EventTrigger("SwitchUIState", uIMobile);
+            canPlaceObjectMobile = true;
+        }
+        else
+        {
+            canPlaceObject = true;
+        }
+
+        objectToPlace = Instantiate(placeMe, transform.position, Quaternion.identity);
+        if (objectToPlace.GetComponent<PlaceableRoom>()) 
+        {
+            EventManager.current.EventTrigger("EnableRoomGrid");
+            objectIsRoom = true; 
+        }
+        gridSize = objectToPlace.GetComponent<PlaceableObject>().objectSize;
     }
 
     private void OnFire()
@@ -36,23 +114,30 @@ public class ObjectPlacer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(canPlaceObject)
+        if(isPaused){ }
+        else if(canPlaceObject)
         {
-            ObjectFollowMouse();
+            ObjectFollow(Mouse.current.position.ReadValue());
         }
+        else if(canPlaceObjectMobile)
+        {
+            ObjectFollow(touchPos1);
+        }
+
+
     }
 
-    private void ObjectFollowMouse()
+    private void ObjectFollow(Vector2 vector)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        Ray ray = Camera.main.ScreenPointToRay(vector);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-
             pos = hit.point;
 
-            pos.x -= pos.x % 1;
-            pos.y -= pos.y % 1;
-            pos.z -= pos.z % 1;
+            pos.x -= pos.x % gridSize;
+            pos.y -= pos.y % gridSize;
+            pos.z -= pos.z % gridSize;
 
             pos.x += 0.5f;
             pos.y += 0.5f;
@@ -68,9 +153,7 @@ public class ObjectPlacer : MonoBehaviour
 
         if (canPlaceObject)
         {
-            movementWidget.EnableWidget(objectToPlace);
-            canPlaceObject = false;
-            UI.SetActive(false);
+            ConfirmObjectPlacement();
         }
     }
 

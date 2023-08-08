@@ -6,7 +6,9 @@ using UnityEngine;
 public class PlaceableObject : MonoBehaviour
 {
     [SerializeField] private GameObject ghost, actualBlock;
-    public bool useXZButtons, useYButtons, useRotateButtons;
+    public bool useYButtons, useXZRotateButtons, useYRotateButtons;
+    public float objectSize;
+
     public void DisableGhost()
     {
         ghost.SetActive(false);

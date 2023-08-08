@@ -6,15 +6,36 @@ using static UnityEngine.GraphicsBuffer;
 
 public class ThirdPersonCameraTranslate : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed, rotateTime;
+    [SerializeField] private float moveSpeed, playerDrag, rotateTime;
+    [SerializeField] Rigidbody rb;
 
     private float horizontalInput, verticalInput;
 
-    void Update()
+    void FixedUpdate()
     {
-        Vector3 moveDirection = (Vector3.forward * verticalInput) + (Vector3.right * horizontalInput);
+        Vector3 moveDirection = (transform.forward * verticalInput) + (transform.right * horizontalInput);
 
-        transform.Translate(moveDirection * Time.deltaTime * moveSpeed);
+        //changed to physics based movement so camera/player can collide with walls
+        //transform.Translate(moveDirection * Time.deltaTime * moveSpeed);
+
+        MoveCamera(moveDirection.normalized);
+        SpeedControl();
+    }
+
+    private void MoveCamera(Vector3 directionToMove)
+    {
+        rb.AddForce(directionToMove * moveSpeed * 10f, ForceMode.Force);
+    }
+
+    private void SpeedControl()
+    {
+        Vector3 flatVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+
+        if (flatVelocity.magnitude > moveSpeed)
+        {
+            Vector3 limitedVelocity = flatVelocity.normalized * moveSpeed;
+            rb.velocity = new Vector3(limitedVelocity.x, rb.velocity.y, limitedVelocity.z);
+        }
     }
 
     private void OnMove(InputValue inputValue)

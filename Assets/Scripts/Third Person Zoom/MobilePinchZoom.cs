@@ -27,6 +27,12 @@ public class MobilePinchZoom : MonoBehaviour
         secondaryFingerTouch = playerInput.actions["SecondaryFingerTouch"];
     }
 
+    private void Start()
+    {
+        EventManager.current.EnableMobileMovement += Enable;
+        EventManager.current.DisableMobileMovement += Disable;
+    }
+
     private void OnEnable()
     {
         primaryFingerTouch.performed += PrimaryFingerTouch;
@@ -41,6 +47,16 @@ public class MobilePinchZoom : MonoBehaviour
     void SecondaryFingerTouch(InputAction.CallbackContext context)
     {
         touchPos2 = context.ReadValue<Vector2>();
+    }
+
+    private void Disable()
+    {
+        this.enabled = false;
+    }
+
+    private void Enable()
+    {
+        this.enabled = true;
     }
 
     private void Update()
@@ -101,6 +117,7 @@ public class MobilePinchZoom : MonoBehaviour
 
             previousDistance = distance;
             yield return null;
+
         }
     } 
 }
